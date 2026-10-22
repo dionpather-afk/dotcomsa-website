@@ -28,7 +28,9 @@
   }
 
   function money(n) {
-    return CFG.currency + Number(n).toLocaleString("en-ZA", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    // Fixed format on every device: R1,299.00
+    var parts = (Math.round(Number(n) * 100) / 100).toFixed(2).split(".");
+    return CFG.currency + parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "." + parts[1];
   }
 
   function $(sel, root) { return (root || document).querySelector(sel); }
