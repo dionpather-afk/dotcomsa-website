@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your cart | DotComSA</title>
+  <meta name="description" content="Review your DotComSA order and send it to us on WhatsApp or email.">
+  <meta name="theme-color" content="#1E3A8A">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body data-page="cart">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div id="site-header"></div>
+
+  <main id="main">
+    <section class="page-head"><div class="container"><h1>Your cart</h1><p>Check your items, add your delivery details, and send your order to us.</p></div></section>
+    <section class="section" style="padding-top:28px">
+      <div class="container cart">
+        <div id="cart-items"></div>
+        <aside class="summary" id="cart-summary" hidden>
+          <h2 style="font-size:1.3rem">Order summary</h2>
+          <div class="summary__row"><span>Subtotal</span><span id="sum-subtotal"></span></div>
+          <div class="summary__row"><span>Delivery</span><span id="sum-delivery"></span></div>
+          <div class="summary__row summary__total"><span>Total</span><span id="sum-total"></span></div>
+          <p class="hint" id="free-hint" style="color:var(--muted);font-size:.9rem"></p>
+
+          <form class="form" id="order-form" novalidate>
+            <h3 style="margin:8px 0 0">Delivery details</h3>
+            <div class="field"><label for="f-name">Full name</label><input id="f-name" name="name" autocomplete="name" required data-error="Please enter your name."><div class="field__error"></div></div>
+            <div class="field"><label for="f-phone">Cellphone number</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" required data-error="Please enter a valid cellphone number."><div class="field__error"></div></div>
+            <div class="field"><label for="f-address">Street address</label><input id="f-address" name="address" autocomplete="street-address" required data-error="Please enter your street address."><div class="field__error"></div></div>
+            <div class="field"><label for="f-city">Suburb and town</label><input id="f-city" name="city" autocomplete="address-level2" required data-error="Please enter your suburb and town."><div class="field__error"></div></div>
+            <div class="field"><label for="f-province">Province</label>
+              <select id="f-province" name="province" required data-error="Please choose your province.">
+                <option value="">Choose&hellip;</option>
+                <option>Eastern Cape</option><option>Free State</option><option>Gauteng</option><option>KwaZulu-Natal</option><option>Limpopo</option><option>Mpumalanga</option><option>North West</option><option>Northern Cape</option><option>Western Cape</option>
+              </select><div class="field__error"></div></div>
+            <div class="field"><label for="f-postal">Postal code</label><input id="f-postal" name="postal" inputmode="numeric" autocomplete="postal-code" maxlength="4" required data-error="Please enter a 4-digit postal code."><div class="field__error"></div></div>
+            <div class="field"><label for="f-notes">Notes (optional)</label><textarea id="f-notes" name="notes" rows="2"></textarea></div>
+            <button class="btn btn--wa btn--block" type="button" id="send-wa">Send order on WhatsApp</button>
+            <button class="btn btn--outline btn--block" type="button" id="send-email">Send order by email</button>
+            <p class="hint" style="color:var(--muted);font-size:.85rem;margin:0">Your details go straight to DotComSA in your own WhatsApp or email message. We confirm stock, then send you payment details. See our <a href="privacy.html">privacy policy</a>.</p>
+          </form>
+
+          <div id="order-done" hidden>
+            <p class="notice notice--ok">Your order message is ready. Press send in WhatsApp or your email app to place it. We'll reply to confirm and send payment details.</p>
+            <div class="form" style="margin-top:12px">
+              <button class="btn btn--red btn--block" type="button" id="clear-cart">I've sent it, clear my cart</button>
+              <button class="btn btn--outline btn--block" type="button" id="back-to-form">Go back and edit</button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/products.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

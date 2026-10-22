@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shop all | DotComSA</title>
+  <meta name="description" content="Shop affordable clothing for men, women and kids. Delivered anywhere in South Africa.">
+  <meta name="theme-color" content="#1E3A8A">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body data-page="shop">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div id="site-header"></div>
+
+  <main id="main">
+    <section class="page-head"><div class="container"><h1 id="shop-title">Shop all</h1><p id="shop-intro">Clothing for men, women and kids, delivered anywhere in South Africa.</p></div></section>
+    <section class="section" style="padding-top:28px">
+      <div class="container">
+        <div class="filters">
+          <div id="cat-chips" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+          <div class="filters__sort">
+            <label for="sort">Sort</label>
+            <select class="select" id="sort">
+              <option value="featured">Recommended</option>
+              <option value="low">Price: low to high</option>
+              <option value="high">Price: high to low</option>
+              <option value="sale">On sale first</option>
+            </select>
+          </div>
+        </div>
+        <p id="shop-count" style="color:var(--muted)"></p>
+        <div class="grid" id="shop-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/products.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

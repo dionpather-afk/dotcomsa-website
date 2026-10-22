@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 440" role="img" aria-label="Clothing for men, women and kids">
+  <circle cx="260" cy="230" r="190" fill="#FFFFFF" fill-opacity=".08"/>
+  <circle cx="420" cy="80" r="40" fill="#DC2626"/>
+  <g transform="translate(40 70) scale(.62)" stroke="#0F172A" stroke-opacity=".15" stroke-width="3" stroke-linejoin="round">
+    <path d="M135 95 Q140 45 200 45 Q260 45 265 95 L300 105 L345 340 L305 350 L280 205 L280 415 L120 415 L120 205 L95 350 L55 340 L100 105 Z" fill="#FFFFFF"/>
+  </g>
+  <g transform="translate(185 40) scale(.72)" stroke="#0F172A" stroke-opacity=".15" stroke-width="3" stroke-linejoin="round">
+    <path d="M165 60 L178 60 L185 110 L215 110 L222 60 L235 60 L245 150 L330 425 L70 425 L155 150 Z" fill="#DC2626"/>
+  </g>
+  <g transform="translate(330 190) scale(.45)" stroke="#0F172A" stroke-opacity=".15" stroke-width="3" stroke-linejoin="round">
+    <path d="M120 90 L170 70 Q200 100 230 70 L280 90 L345 150 L305 195 L280 172 L280 410 L120 410 L120 172 L95 195 L55 150 Z" fill="#F2B705"/>
+  </g>
+  <rect x="60" y="395" width="400" height="8" rx="4" fill="#FFFFFF" fill-opacity=".25"/>
+</svg>
