@@ -1,3 +1,7 @@
 __pycache__/
 *.pyc
 .DS_Store
+# Server secrets and local databases: never commit
+api/config.local.php
+*.sqlite
+*.sqlite3

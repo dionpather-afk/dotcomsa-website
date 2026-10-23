@@ -1,0 +1,7 @@
+# Only the four public endpoints may be called from the web.
+<IfModule mod_authz_core.c>
+  Require all denied
+  <FilesMatch "^(status|checkout|notify|order-status)\.php$">
+    Require all granted
+  </FilesMatch>
+</IfModule>

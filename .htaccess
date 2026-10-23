@@ -1,0 +1,26 @@
+# DotComSA on Xneelo (Apache). Ignored by GitHub Pages.
+Options -Indexes
+ErrorDocument 404 /404.html
+
+# Never serve project files that are not part of the website.
+<FilesMatch "(^\.|\.(md|sql|sqlite|log|py|sh|yml|yaml|lock|json)$)">
+  Require all denied
+</FilesMatch>
+RedirectMatch 404 ^/(docs|tests|tools|\.github)(/|$)
+
+# Always use HTTPS.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=15552000"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; form-action 'self' https://www.payfast.co.za https://sandbox.payfast.co.za; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
+</IfModule>

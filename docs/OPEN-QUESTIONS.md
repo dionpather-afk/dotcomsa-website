@@ -17,5 +17,8 @@ Nothing below blocks the preview. All of it must be answered before go-live.
 - [ ] Logo. (Preview uses a text logo.)
 - [ ] Facebook, Instagram and TikTok page links.
 - [ ] How customers will pay in Phase 1 (EFT details sent on WhatsApp?), and whether he has, or wants, a PayFast or Yoco account for Phase 2.
+- [ ] DotComSA's PayFast Merchant ID (and Split Payments switched on, with TLC as receiving merchant)
+- [ ] TLC's own PayFast merchant account and Merchant ID
+- [ ] PayFast confirmations: fee before/after split, refunds and chargebacks on the split, payment methods that support splits
 - [ ] Joseph Mathenjwa's role: owner, partner or funder?
 - [ ] Client to review and approve the draft Terms and Privacy pages.

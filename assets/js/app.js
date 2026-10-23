@@ -199,6 +199,35 @@
       "</div></article>";
   }
 
+  /* ---------- Payment server (Phase 2) ----------
+   * On the Xneelo host, api/status.php answers with JSON and card payments switch on.
+   * On the GitHub preview there is no server, so the site keeps WhatsApp ordering. */
+
+  var SERVER = null;
+
+  function detectServer(done) {
+    var finished = false;
+    function finish(data) {
+      if (finished) return;
+      finished = true;
+      if (data && data.payfast === true) {
+        SERVER = data;
+        if (typeof data.deliveryFee === "number") CFG.deliveryFee = data.deliveryFee;
+        if (typeof data.freeDeliveryFrom === "number") CFG.freeDeliveryFrom = data.freeDeliveryFrom;
+        if (data.deliveryTime) CFG.deliveryTime = data.deliveryTime;
+      }
+      done();
+    }
+    if (!window.fetch) return finish(null);
+    setTimeout(function () { finish(null); }, 4000);
+    fetch("api/status.php", { cache: "no-store", headers: { Accept: "application/json" } })
+      .then(function (r) {
+        var type = r.headers.get("content-type") || "";
+        return r.ok && type.indexOf("application/json") > -1 ? r.json() : null;
+      })
+      .then(finish, function () { finish(null); });
+  }
+
   /* ---------- Pages ---------- */
 
   function pageHome() {
@@ -405,6 +434,7 @@
         var bad = !input.value.trim();
         if (!bad && input.name === "phone") bad = !/^[0-9+ ()-]{9,15}$/.test(input.value.trim());
         if (!bad && input.name === "postal") bad = !/^[0-9]{4}$/.test(input.value.trim());
+        if (!bad && input.name === "email") bad = !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(input.value.trim());
         field.classList.toggle("field--error", bad);
         if (err) err.textContent = bad ? input.getAttribute("data-error") : "";
         if (bad && ok) { input.focus(); ok = false; }
@@ -456,7 +486,116 @@
       done.hidden = true;
     });
 
+    // Clear a field's error message as soon as the customer fixes it.
+    form.addEventListener("input", function (e) {
+      var field = e.target.closest(".field");
+      if (!field || !field.classList.contains("field--error")) return;
+      field.classList.remove("field--error");
+      var err = field.querySelector(".field__error");
+      if (err) err.textContent = "";
+    });
+
+    if (param("cancelled")) {
+      $("#cart-notice").innerHTML = '<p class="notice">Payment cancelled. Your cart is still here whenever you\u2019re ready.</p>';
+    }
+
+    function showPayError(msg, fields) {
+      $("#pay-error").innerHTML = msg ? '<p class="notice notice--error">' + esc(msg) + "</p>" : "";
+      Object.keys(fields || {}).forEach(function (name) {
+        var input = form.querySelector('[name="' + name + '"]');
+        if (!input) return;
+        var field = input.closest(".field");
+        field.classList.add("field--error");
+        var err = field.querySelector(".field__error");
+        if (err) err.textContent = fields[name];
+      });
+    }
+
+    var payBtn = $("#pay-card");
+    payBtn.addEventListener("click", function () {
+      showPayError("");
+      if (!readCart().length || !validate()) return;
+      var f = new FormData(form);
+      var customer = {};
+      ["name", "email", "phone", "address", "city", "province", "postal", "notes"].forEach(function (k) { customer[k] = String(f.get(k) || ""); });
+      payBtn.disabled = true;
+      payBtn.textContent = "Connecting to PayFast\u2026";
+      fetch("api/checkout.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ items: readCart(), customer: customer })
+      })
+        .then(function (r) { return r.json().catch(function () { return { error: "Sorry, something went wrong. Please try again." }; }); })
+        .then(function (res) {
+          if (!res || res.error || !res.action) {
+            payBtn.disabled = false;
+            payBtn.textContent = "Pay securely with PayFast";
+            showPayError((res && res.error) || "Sorry, something went wrong. Please try again.", res && res.fields);
+            return;
+          }
+          var pf = document.createElement("form");
+          pf.method = "post";
+          pf.action = res.action;
+          Object.keys(res.fields).forEach(function (k) {
+            var input = document.createElement("input");
+            input.type = "hidden";
+            input.name = k;
+            input.value = res.fields[k];
+            pf.appendChild(input);
+          });
+          document.body.appendChild(pf);
+          pf.submit();
+        }, function () {
+          payBtn.disabled = false;
+          payBtn.textContent = "Pay securely with PayFast";
+          showPayError("We couldn't reach the payment server. Please check your connection and try again.");
+        });
+    });
+
     draw();
+    detectServer(function () {
+      if (!SERVER) return;
+      $("#email-field").hidden = false;
+      $("#f-email").required = true;
+      $("#card-pay").hidden = false;
+      if (!SERVER.allowWhatsappOrders) $("#manual-order").hidden = true;
+      draw();
+    });
+  }
+
+  function pageThanks() {
+    var ref = param("ref");
+    var token = param("t");
+    var box = $("#thanks-status");
+    var tries = 0;
+    function show(html) { box.innerHTML = html; }
+    if (!ref || !token) {
+      show('<p class="notice">We couldn\u2019t find your order details. If you paid, please contact us with your name and we\u2019ll check.</p>');
+      return;
+    }
+    function check() {
+      tries++;
+      fetch("api/order-status.php?ref=" + encodeURIComponent(ref) + "&t=" + encodeURIComponent(token), { cache: "no-store" })
+        .then(function (r) { return r.json(); })
+        .then(function (o) {
+          if (o.status === "paid") {
+            writeCart([]);
+            show('<p class="notice notice--ok">Payment received. Thank you!</p><p>Your order number is <strong>' + esc(o.ref) + "</strong> (" + esc(o.total) + "). We\u2019ll be in touch about delivery, usually " + esc(CFG.deliveryTime) + ".</p>");
+          } else if (o.status === "failed" || o.status === "cancelled") {
+            show('<p class="notice notice--error">Your payment didn\u2019t go through, so you have not been charged. Your cart is still saved.</p><a class="btn btn--red" href="cart.html">Back to cart</a>');
+          } else if (o.status === "needs_checking") {
+            show('<p class="notice">We\u2019re checking your payment for order <strong>' + esc(o.ref) + "</strong> and will contact you shortly.</p>");
+          } else if (tries < 40) {
+            show('<p class="notice">Confirming your payment with PayFast\u2026 This usually takes a few seconds.</p><p>Order number: <strong>' + esc(ref) + "</strong></p>");
+            setTimeout(check, 3000);
+          } else {
+            show('<p class="notice">Your payment is still being confirmed. You\u2019ll get an email from PayFast, and we\u2019ll contact you. Order number: <strong>' + esc(ref) + "</strong>.</p>");
+          }
+        }, function () {
+          if (tries < 40) setTimeout(check, 3000);
+        });
+    }
+    check();
   }
 
   function pageContact() {
@@ -480,6 +619,7 @@
     if (page === "shop") pageShop();
     if (page === "product") pageProduct();
     if (page === "cart") pageCart();
+    if (page === "thanks") pageThanks();
     if (page === "contact") pageContact();
   });
 })();

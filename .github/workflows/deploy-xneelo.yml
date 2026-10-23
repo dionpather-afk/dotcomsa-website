@@ -1,0 +1,57 @@
+# Deploys the site to Xneelo by FTP. Runs ONLY when started by hand
+# (GitHub > Actions > Deploy to Xneelo > Run workflow), never automatically.
+#
+# Needs 3 repository secrets (Settings > Secrets and variables > Actions):
+#   FTP_SERVER    e.g. ftp.yourdomain.co.za
+#   FTP_USERNAME  from the Xneelo control panel (NOT the domain name)
+#   FTP_PASSWORD  set in the Xneelo control panel
+#
+# api/config.local.php is NOT in GitHub; it is created on the server by hand and this
+# workflow never overwrites or deletes it.
+name: Deploy to Xneelo
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Folder on the server (test site or live site)"
+        required: true
+        default: "public_html/"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-xneelo
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check PHP files
+        run: for f in $(git ls-files '*.php'); do php -l "$f"; done
+
+      - name: Run payment tests
+        run: php tests/run.php
+
+      - name: Upload to Xneelo
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          server-dir: ${{ inputs.target }}
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
+            docs/**
+            tests/**
+            tools/**
+            README.md
+            api/config.local.php
+            **/*.sqlite
