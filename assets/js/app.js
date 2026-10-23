@@ -39,6 +39,14 @@
     return new URLSearchParams(window.location.search).get(name);
   }
 
+  function cats(p) { return Array.isArray(p.category) ? p.category : [p.category]; }
+  function catLabel(p) {
+    var c = cats(p);
+    if (c.length > 1) return c.indexOf("men") > -1 && c.indexOf("women") > -1 ? "Unisex" : c.map(function (k) { return CATEGORIES[k].label; }).join(" & ");
+    return CATEGORIES[c[0]].label;
+  }
+  function imageFor(p, colour) { return (p.colourImages && p.colourImages[colour]) || p.image; }
+
   function findProduct(id) {
     for (var i = 0; i < PRODUCTS.length; i++) if (PRODUCTS[i].id === id) return PRODUCTS[i];
     return null;
@@ -124,7 +132,7 @@
       : "We deliver anywhere in South Africa";
 
     var header =
-      (window.DOTCOMSA_SAMPLE_DATA ? '<div class="preview-bar">Preview site: products and prices shown are samples only.</div>' : "") +
+      (window.DOTCOMSA_SAMPLE_DATA ? '<div class="preview-bar">Preview site: products and prices shown are samples only.</div>' : (CFG.previewNotice ? '<div class="preview-bar">' + esc(CFG.previewNotice) + "</div>" : "")) +
       '<div class="topbar">' + esc(freeText) + '</div>' +
       '<header class="header"><div class="container header__inner">' +
         '<a class="logo" href="index.html" aria-label="' + esc(CFG.businessName) + ' home">DotCom<span>SA</span></a>' +
@@ -184,7 +192,7 @@
     return '<article class="card">' +
       '<a class="card__img" href="' + url + '">' + tag + '<img src="' + esc(p.image) + '" alt="' + esc(p.name) + '" loading="lazy" width="400" height="480"></a>' +
       '<div class="card__body">' +
-        '<span class="card__cat">' + esc(CATEGORIES[p.category].label) + "</span>" +
+        '<span class="card__cat">' + esc(catLabel(p)) + "</span>" +
         '<a class="card__name" href="' + url + '">' + esc(p.name) + "</a>" +
         '<span class="price">' + money(p.price) + (p.wasPrice ? "<del>" + money(p.wasPrice) + "</del>" : "") + "</span>" +
         '<a class="btn ' + (p.inStock ? "btn--red" : "btn--outline") + '" href="' + url + '">' + (p.inStock ? "Choose size" : "View item") + "</a>" +
@@ -228,7 +236,7 @@
 
     var sortSel = $("#sort");
     function draw() {
-      var list = PRODUCTS.filter(function (p) { return !cat || p.category === cat; }).slice();
+      var list = PRODUCTS.filter(function (p) { return !cat || cats(p).indexOf(cat) > -1; }).slice();
       var s = sortSel.value;
       if (s === "low") list.sort(function (a, b) { return a.price - b.price; });
       else if (s === "high") list.sort(function (a, b) { return b.price - a.price; });
@@ -264,9 +272,9 @@
 
     var tag = !p.inStock ? '<span class="tag tag--soldout">Sold out</span>' : (p.wasPrice ? '<span class="tag">Sale</span>' : "");
     root.innerHTML =
-      '<nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a> / <a href="shop.html?cat=' + p.category + '">' + CATEGORIES[p.category].label + "</a> / " + esc(p.name) + "</nav>" +
+      '<nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a> / <a href="shop.html?cat=' + cats(p)[0] + '">' + CATEGORIES[cats(p)[0]].label + "</a> / " + esc(p.name) + "</nav>" +
       '<div class="product">' +
-        '<div class="product__img">' + tag + '<img src="' + esc(p.image) + '" alt="' + esc(p.name) + '" width="400" height="480"></div>' +
+        '<div class="product__img">' + tag + '<img id="product-photo" src="' + esc(p.image) + '" alt="' + esc(p.name) + '" width="400" height="480"></div>' +
         '<div class="product__info">' +
           "<h1>" + esc(p.name) + "</h1>" +
           '<span class="price">' + money(p.price) + (p.wasPrice ? "<del>" + money(p.wasPrice) + "</del>" : "") + "</span>" +
@@ -291,6 +299,13 @@
     if (!p.inStock) return;
 
     var form = $("#add-form");
+    // Show the matching photo when a colour is picked (if we have one).
+    form.addEventListener("change", function (e) {
+      if (e.target.name !== "colour") return;
+      var photo = $("#product-photo");
+      photo.src = imageFor(p, e.target.value);
+      photo.alt = p.name + " in " + e.target.value;
+    });
     var qty = $("#qty");
     form.addEventListener("click", function (e) {
       var b = e.target.closest("[data-q]");
@@ -347,7 +362,7 @@
       list.innerHTML = items.map(function (it, i) {
         var p = findProduct(it.id);
         return '<div class="cart-item">' +
-          '<img src="' + esc(p.image) + '" alt="" width="90" height="108">' +
+          '<img src="' + esc(imageFor(p, it.colour)) + '" alt="" width="90" height="108">' +
           "<div><a class=\"card__name\" href=\"product.html?id=" + encodeURIComponent(p.id) + "\">" + esc(p.name) + "</a>" +
             '<div class="cart-item__meta">Size: ' + esc(it.size) + " • Colour: " + esc(it.colour) + "</div>" +
             '<div class="qty" style="margin-top:8px"><button type="button" data-i="' + i + '" data-q="-1" aria-label="Less">&minus;</button><input type="number" value="' + it.qty + '" readonly aria-label="Quantity"><button type="button" data-i="' + i + '" data-q="1" aria-label="More">+</button></div>' +

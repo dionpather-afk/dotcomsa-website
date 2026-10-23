@@ -6,7 +6,13 @@ Nothing below blocks the preview. All of it must be answered before go-live.
 - [ ] Which WhatsApp number should orders go to? (Preview uses 082 049 3930 from the brief.)
 - [ ] Delivery fee and delivery time. (Preview uses R100 flat, free over R1,000, 3 to 5 working days, as placeholders.)
 - [ ] Returns and exchanges policy. (Preview uses a 7-day exchange placeholder.)
-- [ ] Real products: names, prices, sizes, colours and photos.
+- [x] First 3 real products received (23 Oct): sneakers R350, women's top R120, men's knit tee R250.
+- [ ] Confirm the price-to-product match (sneakers R350, women's top R120, men's tee R250).
+- [ ] Photos for the women's top in maroon and brown (only black and white supplied).
+- [ ] Is the white sneaker with the silver toe cap a separate option?
+- [ ] Better individual photos for the sneakers (current ones are cut from a collage; black has a watermark cropped out).
+- [ ] Kids products (Kids page is currently empty).
+- [ ] Confirm DotComSA may use these product photos.
 - [ ] About-us text. (Brief says text is ready.)
 - [ ] Logo. (Preview uses a text logo.)
 - [ ] Facebook, Instagram and TikTok page links.

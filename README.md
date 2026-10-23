@@ -5,7 +5,7 @@ Built and maintained by **TLC (Talent Learn Consult)**. GitHub is the single sou
 
 ## Status
 
-**Phase 1: preview build (not live).** Products and prices are samples until the client sends real stock.
+**Phase 1: preview build (not live).** First 3 real products loaded (23 Oct 2026); more to come.
 
 | Phase | What it covers | Status |
 | --- | --- | --- |

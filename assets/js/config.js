@@ -5,7 +5,6 @@
  * TODO before go-live (see docs/OPEN-QUESTIONS.md):
  *  - Confirm which WhatsApp number orders must go to.
  *  - Confirm delivery fee and delivery times with the client.
- *  - Replace sample products in products.js with the client's real stock.
  */
 window.DOTCOMSA_CONFIG = {
   businessName: "DotComSA",
@@ -24,6 +23,9 @@ window.DOTCOMSA_CONFIG = {
   deliveryFee: 100,           // Rand, flat fee per order
   freeDeliveryFrom: 1000,     // Rand, set to 0 to switch off free delivery
   deliveryTime: "3 to 5 working days",
+
+  // Shown in a yellow bar at the top while the site is in preview. Set to "" to remove.
+  previewNotice: "Preview site: delivery fees and policies are still being finalised.",
 
   currency: "R",
   yearsTrading: 5,
